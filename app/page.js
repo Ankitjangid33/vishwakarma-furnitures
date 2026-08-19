@@ -1,9 +1,15 @@
-export default function Home() {
-  return (
-    <main className="container-page py-20">
-      <span className="eyebrow">Setup</span>
-      <h1 className="section-title">Vishwakarma Furniture</h1>
-      <p className="mt-2 text-[var(--color-muted)]">Project setup complete.</p>
-    </main>
-  );
+import HomeClient from '@/components/home/HomeClient';
+import { getProducts, getGallery, getCategoryCounts } from '@/lib/products';
+
+// Naya saman admin se jodte hi home page par dikhe
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [featured, gallery, counts] = await Promise.all([
+    getProducts({ featured: true, limit: 8 }),
+    getGallery({ limit: 6 }),
+    getCategoryCounts()
+  ]);
+
+  return <HomeClient featured={featured} gallery={gallery} counts={counts} />;
 }
