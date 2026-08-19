@@ -1,0 +1,255 @@
+@import "tailwindcss";
+
+/* =========================================================
+   VISHWAKARMA FURNITURE — DESIGN TOKENS
+   Warm wood + cream palette, works for Hindi & English text
+   ========================================================= */
+@theme {
+  --color-wood-50: #faf6f0;
+  --color-wood-100: #f3e9db;
+  --color-wood-200: #e6d2b8;
+  --color-wood-300: #d4b48c;
+  --color-wood-400: #c09562;
+  --color-wood-500: #a97142;
+  --color-wood-600: #8b5a2b;
+  --color-wood-700: #6f4522;
+  --color-wood-800: #4a2c17;
+  --color-wood-900: #2e1b0e;
+
+  --color-gold-400: #e3c25c;
+  --color-gold-500: #c9a227;
+  --color-gold-600: #a8851d;
+
+  --color-ink: #1f1a15;
+  --color-muted: #6b5b4b;
+  --color-cream: #fbf8f3;
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), Georgia, serif;
+
+  --radius-xl2: 1.25rem;
+
+  --shadow-soft: 0 2px 8px rgba(74, 44, 23, 0.06), 0 12px 32px rgba(74, 44, 23, 0.08);
+  --shadow-lift: 0 8px 20px rgba(74, 44, 23, 0.12), 0 24px 48px rgba(74, 44, 23, 0.12);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* Hindi text thoda bada aur khula dikhe */
+  html[lang="hi"] body {
+    letter-spacing: 0;
+    line-height: 1.75;
+  }
+
+  ::selection {
+    background: var(--color-wood-200);
+    color: var(--color-wood-900);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-wood-600);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    cursor: pointer;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-primary {
+    background-color: var(--color-wood-600);
+    color: #fff;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-wood-700);
+  }
+
+  .btn-outline {
+    border: 1.5px solid var(--color-wood-300);
+    color: var(--color-wood-800);
+    background: transparent;
+  }
+
+  .btn-outline:hover {
+    background-color: var(--color-wood-100);
+  }
+
+  .btn-whatsapp {
+    background-color: #25d366;
+    color: #fff;
+  }
+
+  .btn-whatsapp:hover {
+    background-color: #1eb355;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: var(--radius-xl2);
+    border: 1px solid var(--color-wood-100);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+
+  .field {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1.5px solid var(--color-wood-200);
+    background: #fff;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .field:focus {
+    outline: none;
+    border-color: var(--color-wood-500);
+    box-shadow: 0 0 0 3px rgba(169, 113, 66, 0.15);
+  }
+
+  .label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-wood-800);
+    margin-bottom: 0.35rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 9999px;
+    border: 1.5px solid var(--color-wood-200);
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: #fff;
+    color: var(--color-wood-800);
+    transition: all 0.15s ease;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .chip:hover {
+    border-color: var(--color-wood-400);
+    background: var(--color-wood-50);
+  }
+
+  .chip-active {
+    background: var(--color-wood-600);
+    border-color: var(--color-wood-600);
+    color: #fff;
+  }
+
+  .chip-active:hover {
+    background: var(--color-wood-700);
+    border-color: var(--color-wood-700);
+  }
+
+  .section-title {
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    color: var(--color-wood-900);
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-wood-500);
+  }
+
+  /* Jab tak asli photo na ho — lakdi jaisa texture */
+  .wood-texture {
+    background-image:
+      repeating-linear-gradient(
+        100deg,
+        rgba(255, 255, 255, 0.06) 0px,
+        rgba(255, 255, 255, 0.06) 2px,
+        transparent 2px,
+        transparent 9px
+      ),
+      linear-gradient(135deg, var(--color-wood-400), var(--color-wood-700));
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .fade-up {
+    animation: fadeUp 0.5s ease both;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
