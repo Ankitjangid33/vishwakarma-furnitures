@@ -4,20 +4,30 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import { DEFAULT_LANG, LANGS, t as translate, pick as pickLang } from '@/lib/i18n';
 
 const LanguageContext = createContext(null);
-const STORAGE_KEY = 'vf_lang';
 
-export function LanguageProvider({ children }) {
-  const [lang, setLangState] = useState(DEFAULT_LANG);
+/**
+ * Website ke liye default Hindi hai, admin panel ke liye English —
+ * isliye `defaultLang`, `storageKey` aur `dict` props se badla ja sakta hai.
+ * Dono ki chuni hui bhasha alag-alag yaad rehti hai.
+ */
+export function LanguageProvider({
+  children,
+  defaultLang = DEFAULT_LANG,
+  storageKey = 'vf_lang',
+  dict = null,
+  followBrowser = true
+}) {
+  const [lang, setLangState] = useState(defaultLang);
   const [ready, setReady] = useState(false);
 
   // Pehli baar: pehle se chuni hui bhasha, warna browser ki bhasha
   useEffect(() => {
-    let next = DEFAULT_LANG;
+    let next = defaultLang;
     try {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
+      const saved = window.localStorage.getItem(storageKey);
       if (saved && LANGS.includes(saved)) {
         next = saved;
-      } else if (typeof navigator !== 'undefined') {
+      } else if (followBrowser && typeof navigator !== 'undefined') {
         next = navigator.language?.toLowerCase().startsWith('hi') ? 'hi' : 'en';
       }
     } catch {
@@ -25,27 +35,30 @@ export function LanguageProvider({ children }) {
     }
     setLangState(next);
     setReady(true);
-  }, []);
+  }, [defaultLang, storageKey, followBrowser]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
 
-  const setLang = useCallback((next) => {
-    if (!LANGS.includes(next)) return;
-    setLangState(next);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      /* ignore */
-    }
-  }, []);
+  const setLang = useCallback(
+    (next) => {
+      if (!LANGS.includes(next)) return;
+      setLangState(next);
+      try {
+        window.localStorage.setItem(storageKey, next);
+      } catch {
+        /* ignore */
+      }
+    },
+    [storageKey]
+  );
 
   const toggleLang = useCallback(() => {
     setLang(lang === 'hi' ? 'en' : 'hi');
   }, [lang, setLang]);
 
-  const t = useCallback((key) => translate(key, lang), [lang]);
+  const t = useCallback((key) => translate(key, lang, dict), [lang, dict]);
   const pick = useCallback((obj) => pickLang(obj, lang), [lang]);
 
   return (

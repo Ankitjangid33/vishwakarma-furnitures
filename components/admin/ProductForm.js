@@ -3,7 +3,9 @@
 import { useState } from 'react';
 import Icon from '../Icons';
 import ImageUploader from './ImageUploader';
+import { useLang } from '../LanguageProvider';
 import { CATEGORIES } from '@/lib/categories';
+import { pick } from '@/lib/i18n';
 
 const EMPTY = {
   slug: '',
@@ -25,19 +27,27 @@ const EMPTY = {
 };
 
 const UNITS = [
-  { v: 'piece', l: 'नग / piece' },
-  { v: 'set', l: 'सेट / set' },
-  { v: 'sqft', l: 'वर्ग फुट / sq.ft' },
-  { v: 'runningft', l: 'रनिंग फुट / running ft' }
+  { v: 'piece', k: 'unitPiece' },
+  { v: 'set', k: 'unitSet' },
+  { v: 'sqft', k: 'unitSqft' },
+  { v: 'runningft', k: 'unitRunningFt' }
 ];
 
 const PRICE_TYPES = [
-  { v: 'fixed', l: 'पक्का दाम / Fixed' },
-  { v: 'from', l: 'शुरू ... से / From' },
-  { v: 'quote', l: 'दाम पूछें / On request' }
+  { v: 'fixed', k: 'priceFixed' },
+  { v: 'from', k: 'priceFrom' },
+  { v: 'quote', k: 'priceQuote' }
 ];
 
+const ERROR_KEY = {
+  SLUG_EXISTS: 'slugExists',
+  NAME_REQUIRED: 'nameRequired',
+  INVALID_CATEGORY: 'invalidCategory',
+  DB_NOT_CONNECTED: 'dbNotConnectedShort'
+};
+
 export default function ProductForm({ product, onClose, onSaved }) {
+  const { t, lang } = useLang();
   const [form, setForm] = useState(() => ({ ...EMPTY, ...(product || {}) }));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -83,20 +93,13 @@ export default function ProductForm({ product, onClose, onSaved }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(
-          {
-            SLUG_EXISTS: 'यह slug पहले से है — दूसरा नाम/slug रखें',
-            NAME_REQUIRED: 'नाम ज़रूरी है',
-            INVALID_CATEGORY: 'कमरा (category) चुनें',
-            DB_NOT_CONNECTED: 'MongoDB juda nahi hai'
-          }[data.error] || data.message || 'सेव नहीं हुआ'
-        );
+        setError(ERROR_KEY[data.error] ? t(ERROR_KEY[data.error]) : data.message || t('saveFailed'));
         return;
       }
 
       onSaved(data.product);
     } catch {
-      setError('कुछ गड़बड़ हो गई');
+      setError(t('somethingWrong'));
     } finally {
       setBusy(false);
     }
@@ -109,12 +112,7 @@ export default function ProductForm({ product, onClose, onSaved }) {
         className="mx-auto my-4 w-full max-w-3xl rounded-3xl bg-white p-6 shadow-xl md:p-8"
       >
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-xl text-wood-900">
-            {isEdit ? 'सामान बदलें' : 'नया सामान जोड़ें'}
-            <span className="ml-2 text-sm font-normal text-muted">
-              {isEdit ? 'Edit product' : 'Add product'}
-            </span>
-          </h2>
+          <h2 className="text-xl text-wood-900">{isEdit ? t('editProduct') : t('addProduct')}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -126,45 +124,45 @@ export default function ProductForm({ product, onClose, onSaved }) {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="label">नाम (हिंदी) *</label>
+            <label className="label">{t('nameHi')} *</label>
             <input className="field" value={form.name.hi} onChange={set('name.hi')} required />
           </div>
           <div>
-            <label className="label">Name (English) *</label>
+            <label className="label">{t('nameEn')} *</label>
             <input className="field" value={form.name.en} onChange={set('name.en')} required />
           </div>
 
           <div>
-            <label className="label">कमरा / Category *</label>
+            <label className="label">{t('category')} *</label>
             <select className="field" value={form.category} onChange={set('category')}>
               {CATEGORIES.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name.hi} / {c.name.en}
+                  {pick(c.name, lang)}
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="label">प्रकार / Type</label>
+            <label className="label">{t('type')}</label>
             <select className="field" value={form.type} onChange={set('type')}>
-              <option value="item">अकेली चीज़ / Single item</option>
-              <option value="set">पूरा सेट / Full set</option>
+              <option value="item">{t('singleItem')}</option>
+              <option value="set">{t('fullSet')}</option>
             </select>
           </div>
 
           <div className="sm:col-span-2">
-            <label className="label">जानकारी (हिंदी)</label>
+            <label className="label">{t('descriptionHi')}</label>
             <textarea className="field" rows={3} value={form.description.hi} onChange={set('description.hi')} />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="label">Description (English)</label>
+            <label className="label">{t('descriptionEn')}</label>
             <textarea className="field" rows={3} value={form.description.en} onChange={set('description.en')} />
           </div>
 
           <div>
-            <label className="label">दाम / Price (₹)</label>
+            <label className="label">{t('price')} (₹)</label>
             <input
               type="number"
               min="0"
@@ -176,50 +174,50 @@ export default function ProductForm({ product, onClose, onSaved }) {
           </div>
 
           <div>
-            <label className="label">दाम कैसा है</label>
+            <label className="label">{t('priceKind')}</label>
             <select className="field" value={form.priceType} onChange={set('priceType')}>
               {PRICE_TYPES.map((p) => (
                 <option key={p.v} value={p.v}>
-                  {p.l}
+                  {t(p.k)}
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="label">इकाई / Unit</label>
+            <label className="label">{t('unit')}</label>
             <select className="field" value={form.unit} onChange={set('unit')}>
               {UNITS.map((u) => (
                 <option key={u.v} value={u.v}>
-                  {u.l}
+                  {t(u.k)}
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="label">कितने दिन में तैयार</label>
+            <label className="label">{t('deliveryDays')}</label>
             <input type="number" min="0" className="field" value={form.deliveryDays} onChange={set('deliveryDays')} />
           </div>
 
           <div>
-            <label className="label">लकड़ी / सामग्री (हिंदी)</label>
+            <label className="label">{t('materialHi')}</label>
             <input className="field" value={form.material.hi} onChange={set('material.hi')} />
           </div>
 
           <div>
-            <label className="label">Material (English)</label>
+            <label className="label">{t('materialEn')}</label>
             <input className="field" value={form.material.en} onChange={set('material.en')} />
           </div>
 
           <div>
-            <label className="label">नाप / Size</label>
+            <label className="label">{t('size')}</label>
             <input className="field" value={form.size} onChange={set('size')} placeholder="6 x 6.5 ft" />
           </div>
 
           <div>
             <label className="label">
-              Slug <span className="font-normal text-muted">(खाली छोड़ें तो अपने आप बन जाएगा)</span>
+              Slug <span className="font-normal text-muted">{t('slugHint')}</span>
             </label>
             <input className="field" value={form.slug} onChange={set('slug')} placeholder="teak-double-bed" />
           </div>
@@ -227,7 +225,7 @@ export default function ProductForm({ product, onClose, onSaved }) {
           {/* set includes */}
           {form.type === 'set' && (
             <div className="sm:col-span-2">
-              <span className="label">सेट में क्या-क्या आता है</span>
+              <span className="label">{t('setIncludes')}</span>
               <div className="space-y-2">
                 {(form.includes || []).map((inc, i) => (
                   <div key={i} className="flex gap-2">
@@ -258,7 +256,7 @@ export default function ProductForm({ product, onClose, onSaved }) {
                   className="btn btn-outline !py-2 !text-xs"
                 >
                   <Icon name="plus" className="h-4 w-4" />
-                  लाइन जोड़ें
+                  {t('addLine')}
                 </button>
               </div>
             </div>
@@ -266,6 +264,7 @@ export default function ProductForm({ product, onClose, onSaved }) {
 
           <div className="sm:col-span-2">
             <ImageUploader
+              label={t('photos')}
               images={form.images || []}
               onChange={(images) => setForm((f) => ({ ...f, images }))}
               max={6}
@@ -280,7 +279,7 @@ export default function ProductForm({ product, onClose, onSaved }) {
                 onChange={set('featured')}
                 className="h-5 w-5 accent-[var(--color-wood-600)]"
               />
-              होम पेज पर दिखाएं
+              {t('showOnHome')}
             </label>
 
             <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-wood-800">
@@ -290,11 +289,11 @@ export default function ProductForm({ product, onClose, onSaved }) {
                 onChange={set('active')}
                 className="h-5 w-5 accent-[var(--color-wood-600)]"
               />
-              वेबसाइट पर चालू
+              {t('liveOnSite')}
             </label>
 
             <label className="flex items-center gap-2 text-sm font-medium text-wood-800">
-              क्रम
+              {t('sortOrder')}
               <input
                 type="number"
                 className="field !w-24 !py-1.5"
@@ -309,10 +308,10 @@ export default function ProductForm({ product, onClose, onSaved }) {
 
         <div className="mt-6 flex gap-3">
           <button type="submit" disabled={busy} className="btn btn-primary disabled:opacity-60">
-            {busy ? 'सेव हो रहा है…' : 'सेव करें'}
+            {busy ? t('saving') : t('save')}
           </button>
           <button type="button" onClick={onClose} className="btn btn-outline">
-            रद्द करें
+            {t('cancel')}
           </button>
         </div>
       </form>
