@@ -109,7 +109,7 @@ export default function AdminOrders() {
                       onClick={() => setOpen(isOpen ? null : o._id)}
                       className="flex w-full flex-wrap items-center gap-3 p-4 text-left"
                     >
-                      <span className="min-w-0 flex-1">
+                      <span className="min-w-[10rem] flex-1 break-words">
                         <span className="block font-semibold text-wood-900">
                           {o.customer?.name}
                           <span className="ml-2 text-sm font-normal text-muted">{o.customer?.phone}</span>

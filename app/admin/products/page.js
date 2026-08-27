@@ -126,7 +126,7 @@ export default function AdminProducts() {
                       )}
                     </div>
 
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-[10rem] flex-1 break-words">
                       <p className="font-semibold text-wood-900">{pick(p.name, lang)}</p>
                       <p className="text-sm text-muted">{lang === 'hi' ? p.name?.en : p.name?.hi}</p>
                       <p className="mt-1 flex flex-wrap gap-x-3 text-xs text-muted">
@@ -136,11 +136,11 @@ export default function AdminProducts() {
                       </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex shrink-0 flex-wrap items-center gap-2">
                       <button
                         type="button"
                         onClick={() => toggle(p, 'featured')}
-                        className={`chip !py-1.5 !text-xs ${p.featured ? 'chip-active' : ''}`}
+                        className={`chip py-1.5 text-xs ${p.featured ? 'chip-active' : ''}`}
                         title={t('showOnHome')}
                       >
                         <Icon name="star" className="h-3.5 w-3.5" />

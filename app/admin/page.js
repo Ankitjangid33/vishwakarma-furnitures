@@ -100,7 +100,7 @@ export default function AdminDashboard() {
               <div className="card divide-y divide-wood-100">
                 {data.recentOrders.map((o) => (
                   <div key={o._id} className="flex flex-wrap items-center gap-3 p-4">
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-[10rem] flex-1 break-words">
                       <p className="font-semibold text-wood-900">
                         {o.customer?.name}{' '}
                         <span className="text-sm font-normal text-muted">· {o.customer?.phone}</span>
