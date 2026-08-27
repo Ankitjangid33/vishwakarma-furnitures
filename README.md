@@ -43,8 +43,10 @@ cp .env.example .env.local
 | `MONGODB_URI` | [mongodb.com/atlas](https://www.mongodb.com/atlas) → free cluster → Connect → Drivers |
 | `CLOUDINARY_CLOUD_NAME` / `API_KEY` / `API_SECRET` | [cloudinary.com](https://cloudinary.com) → Dashboard |
 | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | wahi cloud name (browser ke liye) |
-| `ADMIN_PASSWORD` | jo aap khud rakhna chahein — isi se `/admin` khulega |
-| `AUTH_SECRET` | koi lamba random text |
+| `AUTH_SECRET` | koi lamba random text (login cookie sign karne ke liye) |
+
+> Admin ka **username-password ab `.env` me nahi, MongoDB me** save hota hai.
+> Pehli baar `/admin` kholne par setup screen khud aa jayegi.
 | `NEXT_PUBLIC_WHATSAPP` | aapka WhatsApp number, `91` ke saath, bina `+` — jaise `919876543210` |
 
 ### 3. Shuruaati saman database me daalein
@@ -88,11 +90,29 @@ Saman, photos aur gallery **admin panel se** badalna sabse aasan hai — code ch
 
 ## 🖥️ Admin panel (`/admin`)
 
-1. `/admin` kholein → `ADMIN_PASSWORD` daalein
+### Pehli baar login
+
+Database me jab tak ek bhi admin nahi hai, `/admin` par **"पहला एडमिन बनाएं"** screen aati hai —
+wahin username, password aur naam bhar dein. Wo seedha MongoDB (`adminusers` collection) me
+save ho jata hai, password sirf **scrypt hash** ki shakl me — plain text kabhi nahi.
+
+Terminal se banana ho (ya password bhool jayein) to:
+
+```bash
+npm run create-admin -- <username> <password> "Naam" --role owner
+```
+
+Wahi username dobara dene par uska password reset ho jata hai.
+
+### Panel me kya-kya hai
+
+1. `/admin` kholein → apna username-password daalein
 2. **डैशबोर्ड** — naye order aur sandesh ek nazar me
 3. **सामान** — naya product jodein, photo upload karein (seedha Cloudinary par jati hai), daam/naap badlein, "होम" dabakar home page par dikhayein
 4. **गैलरी** — apne kiye hue kaam ki photos
 5. **ऑर्डर** — customer ko call/WhatsApp karein, status badlein (नया → बात हुई → पक्का → बन रहा है → दे दिया)
+6. **यूज़र** (sirf owner) — aur log jodein jo panel chala sakein, unka role badlein, band karein ya password reset karein
+7. **मेरा अकाउंट** — apna naam aur password khud badlein
 6. **संदेश** — contact form ke sandesh
 
 Photos browser se **seedha Cloudinary** jati hain, isliye badi photos bhi bina dikkat chadh jati hain.
@@ -154,5 +174,5 @@ scripts/seed.mjs          shuruaati data
 |---|---|
 | Admin me "MongoDB juda nahi hai" | `.env.local` me `MONGODB_URI` sahi hai? Atlas me IP allow kiya? |
 | Photo upload nahi ho rahi | `CLOUDINARY_*` teeno values aur `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` bhare hain? |
-| Admin login nahi ho raha | `.env.local` me `ADMIN_PASSWORD` set karke server dobara chalayein |
+| Admin login nahi ho raha | `npm run create-admin -- <username> <password>` se naya password set karein |
 | Website par purana saman dikh raha | Page 1 minute me apne aap taaza ho jata hai |

@@ -3,20 +3,22 @@
 import { useEffect, useState } from 'react';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
-import { formatPrice } from '@/lib/i18n';
+import { useLang } from '@/components/LanguageProvider';
+import { formatPrice, pick } from '@/lib/i18n';
 
 const STATUSES = [
-  { v: 'new', l: 'नया', color: 'bg-gold-500 text-wood-900' },
-  { v: 'contacted', l: 'बात हुई', color: 'bg-blue-100 text-blue-800' },
-  { v: 'confirmed', l: 'पक्का', color: 'bg-indigo-100 text-indigo-800' },
-  { v: 'in_production', l: 'बन रहा है', color: 'bg-amber-100 text-amber-800' },
-  { v: 'delivered', l: 'दे दिया', color: 'bg-green-100 text-green-800' },
-  { v: 'cancelled', l: 'रद्द', color: 'bg-red-100 text-red-800' }
+  { v: 'new', k: 'statusNew', color: 'bg-gold-500 text-wood-900' },
+  { v: 'contacted', k: 'statusContacted', color: 'bg-blue-100 text-blue-800' },
+  { v: 'confirmed', k: 'statusConfirmed', color: 'bg-indigo-100 text-indigo-800' },
+  { v: 'in_production', k: 'statusInProduction', color: 'bg-amber-100 text-amber-800' },
+  { v: 'delivered', k: 'statusDelivered', color: 'bg-green-100 text-green-800' },
+  { v: 'cancelled', k: 'statusCancelled', color: 'bg-red-100 text-red-800' }
 ];
 
 const statusInfo = (v) => STATUSES.find((s) => s.v === v) || STATUSES[0];
 
 export default function AdminOrders() {
+  const { t, lang } = useLang();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -58,7 +60,7 @@ export default function AdminOrders() {
   };
 
   const remove = async (order) => {
-    if (!window.confirm(`ऑर्डर ${order.orderNo} हटाना है?`)) return;
+    if (!window.confirm(`${t('deleteOrderQ')} ${order.orderNo}?`)) return;
     const res = await fetch(`/api/admin/orders/${order._id}`, { method: 'DELETE' });
     if (res.ok) setOrders((list) => list.filter((o) => o._id !== order._id));
   };
@@ -66,8 +68,8 @@ export default function AdminOrders() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl text-wood-900">ऑर्डर / Orders</h1>
-        <p className="mt-1 text-sm text-muted">वेबसाइट से आए सारे ऑर्डर यहाँ दिखते हैं</p>
+        <h1 className="text-2xl text-wood-900">{t('ordersTitle')}</h1>
+        <p className="mt-1 text-sm text-muted">{t('ordersSubtitle')}</p>
       </header>
 
       {error && <DbNotice error={error} />}
@@ -76,7 +78,7 @@ export default function AdminOrders() {
         <>
           <div className="no-scrollbar mb-4 flex gap-2 overflow-x-auto pb-1">
             <button type="button" onClick={() => setFilter('all')} className={`chip ${filter === 'all' ? 'chip-active' : ''}`}>
-              सभी
+              {t('all')}
             </button>
             {STATUSES.map((s) => (
               <button
@@ -85,15 +87,15 @@ export default function AdminOrders() {
                 onClick={() => setFilter(s.v)}
                 className={`chip ${filter === s.v ? 'chip-active' : ''}`}
               >
-                {s.l}
+                {t(s.k)}
               </button>
             ))}
           </div>
 
           {loading ? (
-            <p className="text-sm text-muted">लोड हो रहा है…</p>
+            <p className="text-sm text-muted">{t('loading')}</p>
           ) : orders.length === 0 ? (
-            <div className="card p-10 text-center text-sm text-muted">कोई ऑर्डर नहीं मिला</div>
+            <div className="card p-10 text-center text-sm text-muted">{t('noOrdersFound')}</div>
           ) : (
             <div className="space-y-3">
               {orders.map((o) => {
@@ -113,17 +115,17 @@ export default function AdminOrders() {
                           <span className="ml-2 text-sm font-normal text-muted">{o.customer?.phone}</span>
                         </span>
                         <span className="mt-0.5 block text-xs text-muted">
-                          {o.orderNo} · {o.items?.length} चीज़ें ·{' '}
+                          {o.orderNo} · {o.items?.length} {t('itemsCount')} ·{' '}
                           {new Date(o.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
                         </span>
                       </span>
 
                       <span className="font-[family-name:var(--font-display)] font-bold text-wood-800">
                         {formatPrice(o.estimatedTotal)}
-                        {o.hasQuoteItems && <span className="ml-1 text-xs font-normal text-muted">+ पूछना है</span>}
+                        {o.hasQuoteItems && <span className="ml-1 text-xs font-normal text-muted">+ {t('askForPrice')}</span>}
                       </span>
 
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${info.color}`}>{info.l}</span>
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${info.color}`}>{t(info.k)}</span>
 
                       <Icon name={isOpen ? 'chevronDown' : 'chevronRight'} className="h-4 w-4 text-wood-400" />
                     </button>
@@ -133,15 +135,15 @@ export default function AdminOrders() {
                         <div className="grid gap-4 md:grid-cols-2">
                           {/* items */}
                           <div>
-                            <h3 className="text-xs font-bold uppercase tracking-wide text-muted">सामान</h3>
+                            <h3 className="text-xs font-bold uppercase tracking-wide text-muted">{t('items')}</h3>
                             <ul className="mt-2 space-y-1.5">
                               {o.items?.map((it, i) => (
                                 <li key={i} className="flex justify-between gap-3 text-sm text-wood-800">
                                   <span>
-                                    {it.name?.hi || it.name?.en} × {it.qty}
+                                    {pick(it.name, lang)} × {it.qty}
                                   </span>
                                   <span className="shrink-0 font-semibold">
-                                    {it.price ? formatPrice(it.price * it.qty) : 'दाम पूछें'}
+                                    {it.price ? formatPrice(it.price * it.qty) : t('priceOnRequest')}
                                   </span>
                                 </li>
                               ))}
@@ -150,7 +152,7 @@ export default function AdminOrders() {
 
                           {/* customer */}
                           <div>
-                            <h3 className="text-xs font-bold uppercase tracking-wide text-muted">ग्राहक</h3>
+                            <h3 className="text-xs font-bold uppercase tracking-wide text-muted">{t('customer')}</h3>
                             <div className="mt-2 space-y-1 text-sm text-wood-800">
                               {o.customer?.email && <p>{o.customer.email}</p>}
                               {o.customer?.address && <p>{o.customer.address}</p>}
@@ -161,12 +163,12 @@ export default function AdminOrders() {
                               )}
                               {o.visitRequested && (
                                 <p className="inline-block rounded-full bg-gold-500/20 px-2.5 py-0.5 text-xs font-semibold text-wood-800">
-                                  घर पर नाप चाहिए
+                                  {t('wantsHomeVisit')}
                                 </p>
                               )}
                               {o.note && (
                                 <p className="mt-2 rounded-xl bg-white p-3 text-sm">
-                                  <span className="block text-xs font-semibold text-muted">ग्राहक का संदेश</span>
+                                  <span className="block text-xs font-semibold text-muted">{t('customerNote')}</span>
                                   {o.note}
                                 </p>
                               )}
@@ -177,7 +179,7 @@ export default function AdminOrders() {
                         <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-wood-200 pt-4">
                           <a href={`tel:+91${o.customer?.phone}`} className="btn btn-outline !py-2 !text-xs">
                             <Icon name="phone" className="h-4 w-4" />
-                            कॉल करें
+                            {t('call')}
                           </a>
                           <a
                             href={`https://wa.me/91${o.customer?.phone}`}
@@ -196,7 +198,7 @@ export default function AdminOrders() {
                           >
                             {STATUSES.map((s) => (
                               <option key={s.v} value={s.v}>
-                                {s.l}
+                                {t(s.k)}
                               </option>
                             ))}
                           </select>
@@ -207,7 +209,7 @@ export default function AdminOrders() {
                             className="btn !border !border-red-200 !py-2 !text-xs !text-red-600 hover:!bg-red-50"
                           >
                             <Icon name="trash" className="h-4 w-4" />
-                            हटाएं
+                            {t('delete')}
                           </button>
                         </div>
                       </div>

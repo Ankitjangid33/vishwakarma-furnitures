@@ -5,7 +5,9 @@ import Image from 'next/image';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
 import ImageUploader from '@/components/admin/ImageUploader';
+import { useLang } from '@/components/LanguageProvider';
 import { CATEGORIES, getCategory } from '@/lib/categories';
+import { pick } from '@/lib/i18n';
 
 const EMPTY = {
   title: { hi: '', en: '' },
@@ -19,6 +21,7 @@ const EMPTY = {
 };
 
 function GalleryForm({ item, onClose, onSaved }) {
+  const { t, lang } = useLang();
   const [form, setForm] = useState(() => ({ ...EMPTY, ...(item || {}) }));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -50,12 +53,12 @@ function GalleryForm({ item, onClose, onSaved }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error === 'TITLE_REQUIRED' ? 'नाम ज़रूरी है' : data.message || 'सेव नहीं हुआ');
+        setError(data.error === 'TITLE_REQUIRED' ? t('titleRequired') : data.message || t('saveFailed'));
         return;
       }
       onSaved();
     } catch {
-      setError('कुछ गड़बड़ हो गई');
+      setError(t('somethingWrong'));
     } finally {
       setBusy(false);
     }
@@ -65,7 +68,7 @@ function GalleryForm({ item, onClose, onSaved }) {
     <div className="fixed inset-0 z-50 overflow-y-auto bg-wood-900/40 p-4">
       <form onSubmit={submit} className="mx-auto my-4 w-full max-w-xl rounded-3xl bg-white p-6 shadow-xl md:p-8">
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-xl text-wood-900">{isEdit ? 'काम बदलें' : 'नया काम जोड़ें'}</h2>
+          <h2 className="text-xl text-wood-900">{isEdit ? t('editWork') : t('addWork')}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -77,33 +80,33 @@ function GalleryForm({ item, onClose, onSaved }) {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="label">काम का नाम (हिंदी) *</label>
+            <label className="label">{t('workNameHi')} *</label>
             <input className="field" value={form.title.hi} onChange={set('title.hi')} required />
           </div>
           <div>
-            <label className="label">Title (English) *</label>
+            <label className="label">{t('workNameEn')} *</label>
             <input className="field" value={form.title.en} onChange={set('title.en')} required />
           </div>
           <div>
-            <label className="label">जगह (हिंदी)</label>
+            <label className="label">{t('placeHi')}</label>
             <input className="field" value={form.location.hi} onChange={set('location.hi')} placeholder="मालवीय नगर" />
           </div>
           <div>
-            <label className="label">Location (English)</label>
+            <label className="label">{t('placeEn')}</label>
             <input className="field" value={form.location.en} onChange={set('location.en')} placeholder="Malviya Nagar" />
           </div>
           <div>
-            <label className="label">कमरा / Category</label>
+            <label className="label">{t('category')}</label>
             <select className="field" value={form.category} onChange={set('category')}>
               {CATEGORIES.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name.hi} / {c.name.en}
+                  {pick(c.name, lang)}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="label">साल / Year</label>
+            <label className="label">{t('year')}</label>
             <input type="number" className="field" value={form.year} onChange={set('year')} />
           </div>
 
@@ -112,18 +115,18 @@ function GalleryForm({ item, onClose, onSaved }) {
               images={form.image?.url ? [form.image] : []}
               onChange={(imgs) => setForm((f) => ({ ...f, image: imgs[0] || { url: '', publicId: '' } }))}
               max={1}
-              label="काम की फोटो"
+              label={t('workPhoto')}
             />
           </div>
 
           <div className="flex flex-wrap gap-5 sm:col-span-2">
             <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-wood-800">
               <input type="checkbox" checked={form.featured} onChange={set('featured')} className="h-5 w-5 accent-[var(--color-wood-600)]" />
-              होम पेज पर दिखाएं
+              {t('showOnHome')}
             </label>
             <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-wood-800">
               <input type="checkbox" checked={form.active} onChange={set('active')} className="h-5 w-5 accent-[var(--color-wood-600)]" />
-              वेबसाइट पर चालू
+              {t('liveOnSite')}
             </label>
           </div>
         </div>
@@ -132,10 +135,10 @@ function GalleryForm({ item, onClose, onSaved }) {
 
         <div className="mt-6 flex gap-3">
           <button type="submit" disabled={busy} className="btn btn-primary disabled:opacity-60">
-            {busy ? 'सेव हो रहा है…' : 'सेव करें'}
+            {busy ? t('saving') : t('save')}
           </button>
           <button type="button" onClick={onClose} className="btn btn-outline">
-            रद्द करें
+            {t('cancel')}
           </button>
         </div>
       </form>
@@ -144,6 +147,7 @@ function GalleryForm({ item, onClose, onSaved }) {
 }
 
 export default function AdminGallery() {
+  const { t, lang } = useLang();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -171,7 +175,7 @@ export default function AdminGallery() {
   }, []);
 
   const remove = async (item) => {
-    if (!window.confirm('यह फोटो हटानी है?')) return;
+    if (!window.confirm(t('deletePhotoQ'))) return;
     const res = await fetch(`/api/admin/gallery/${item._id}`, { method: 'DELETE' });
     if (res.ok) setItems((list) => list.filter((i) => i._id !== item._id));
   };
@@ -180,12 +184,14 @@ export default function AdminGallery() {
     <div>
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl text-wood-900">गैलरी / हमारा काम</h1>
-          <p className="mt-1 text-sm text-muted">{items.length} फोटो वेबसाइट पर हैं</p>
+          <h1 className="text-2xl text-wood-900">{t('galleryTitle')}</h1>
+          <p className="mt-1 text-sm text-muted">
+            {items.length} {t('photosCount')}
+          </p>
         </div>
         <button type="button" onClick={() => setEditing('new')} className="btn btn-primary">
           <Icon name="plus" className="h-4 w-4" />
-          नया काम जोड़ें
+          {t('addWork')}
         </button>
       </header>
 
@@ -193,11 +199,9 @@ export default function AdminGallery() {
 
       {!error &&
         (loading ? (
-          <p className="text-sm text-muted">लोड हो रहा है…</p>
+          <p className="text-sm text-muted">{t('loading')}</p>
         ) : items.length === 0 ? (
-          <div className="card p-10 text-center text-sm text-muted">
-            अभी कोई फोटो नहीं — “नया काम जोड़ें” दबाएं
-          </div>
+          <div className="card p-10 text-center text-sm text-muted">{t('noPhotosYet')}</div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => {
@@ -214,22 +218,24 @@ export default function AdminGallery() {
                     )}
                     {!item.active && (
                       <span className="absolute left-2 top-2 rounded-full bg-red-600 px-2 py-0.5 text-[11px] font-bold text-white">
-                        बंद
+                        {t('inactive')}
                       </span>
                     )}
                   </div>
 
                   <div className="p-4">
-                    <p className="font-semibold text-wood-900">{item.title?.hi}</p>
-                    <p className="text-sm text-muted">{item.title?.en}</p>
+                    <p className="font-semibold text-wood-900">{pick(item.title, lang)}</p>
+                    <p className="text-sm text-muted">{lang === 'hi' ? item.title?.en : item.title?.hi}</p>
                     <p className="mt-1 text-xs text-muted">
-                      {[item.location?.hi, item.year, cat?.name?.hi].filter(Boolean).join(' · ')}
+                      {[pick(item.location, lang), item.year, pick(cat?.name, lang)]
+                        .filter(Boolean)
+                        .join(' · ')}
                     </p>
 
                     <div className="mt-3 flex gap-2">
                       <button type="button" onClick={() => setEditing(item)} className="btn btn-outline !py-2 !text-xs">
                         <Icon name="hammer" className="h-4 w-4" />
-                        बदलें
+                        {t('edit')}
                       </button>
                       <button
                         type="button"
@@ -237,7 +243,7 @@ export default function AdminGallery() {
                         className="btn !border !border-red-200 !py-2 !text-xs !text-red-600 hover:!bg-red-50"
                       >
                         <Icon name="trash" className="h-4 w-4" />
-                        हटाएं
+                        {t('delete')}
                       </button>
                     </div>
                   </div>

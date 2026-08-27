@@ -1,29 +1,54 @@
 import { NextResponse } from 'next/server';
-import { checkPassword, createToken, AUTH_COOKIE, AUTH_MAX_AGE } from '@/lib/auth';
-import { rateLimit, clientIp } from '@/lib/validate';
+import AdminUser from '@/models/AdminUser';
+import { createToken, AUTH_COOKIE, AUTH_MAX_AGE } from '@/lib/auth';
+import { connectDB } from '@/lib/db';
+import { verifyPassword } from '@/lib/password';
+import { rateLimit, clearRateLimit, clientIp } from '@/lib/validate';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
   const ip = clientIp(request);
-  const limit = rateLimit(`login:${ip}`, { limit: 6, windowMs: 15 * 60_000 });
+  const limitKey = `login:${ip}`;
+  const limit = rateLimit(limitKey, { limit: 10, windowMs: 15 * 60_000 });
   if (!limit.ok) {
-    return NextResponse.json({ error: 'TOO_MANY' }, { status: 429 });
+    return NextResponse.json({ error: 'TOO_MANY', retryAfter: limit.retryAfter }, { status: 429 });
   }
 
-  const { password } = await request.json().catch(() => ({}));
+  const { username, password } = await request.json().catch(() => ({}));
 
-  if (!process.env.ADMIN_PASSWORD) {
-    return NextResponse.json({ error: 'NO_PASSWORD_SET' }, { status: 500 });
+  try {
+    await connectDB();
+  } catch (err) {
+    return NextResponse.json({ error: 'DB_NOT_CONNECTED', message: err.message }, { status: 503 });
   }
 
-  if (!checkPassword(password)) {
-    return NextResponse.json({ error: 'WRONG_PASSWORD' }, { status: 401 });
+  const uname = String(username || '').trim().toLowerCase();
+  const user = uname
+    ? await AdminUser.findOne({ username: uname }).select('+passwordHash')
+    : null;
+
+  // username galat ho ya password — dono me ek jaisa jawab, taaki
+  // username hai ya nahi ye pata na chale
+  const ok = user ? await verifyPassword(password, user.passwordHash) : false;
+
+  if (!ok || !user.active) {
+    return NextResponse.json(
+      { error: user && ok && !user.active ? 'ACCOUNT_DISABLED' : 'WRONG_LOGIN' },
+      { status: 401 }
+    );
   }
 
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set(AUTH_COOKIE, createToken(), {
+  // sahi password aa gaya — ginti saaf, warna roz login karne wale
+  // apne hi ghar ke bahar taale me phans jaate hain
+  clearRateLimit(limitKey);
+
+  user.lastLoginAt = new Date();
+  await user.save();
+
+  const res = NextResponse.json({ ok: true, user: user.toSafeJSON() });
+  res.cookies.set(AUTH_COOKIE, createToken(user), {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',

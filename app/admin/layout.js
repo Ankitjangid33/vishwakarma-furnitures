@@ -1,6 +1,9 @@
-import { isAdmin } from '@/lib/auth';
+import { currentUser, hasAnyAdmin } from '@/lib/auth';
+import AdminLangProvider from '@/components/admin/AdminLangProvider';
 import AdminLogin from '@/components/admin/AdminLogin';
+import AdminSetup from '@/components/admin/AdminSetup';
 import AdminShell from '@/components/admin/AdminShell';
+import DbNotice from '@/components/admin/DbNotice';
 
 export const metadata = {
   title: 'Admin Panel',
@@ -10,10 +13,45 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminLayout({ children }) {
-  const authed = await isAdmin();
+  // database hi na jude to login/setup dono bekaar — pehle wahi bata dein
+  let anyAdmin;
+  try {
+    anyAdmin = await hasAnyAdmin();
+  } catch {
+    return (
+      <AdminLangProvider>
+        <div className="grid min-h-screen place-items-center bg-wood-50 px-4">
+          <div className="w-full max-w-lg">
+            <DbNotice error="DB_NOT_CONNECTED" />
+          </div>
+        </div>
+      </AdminLangProvider>
+    );
+  }
 
-  // Login nahi hai to andar ka kuch bhi nahi dikhta
-  if (!authed) return <AdminLogin />;
+  // pehli baar — koi admin bana hi nahi hai
+  if (!anyAdmin) {
+    return (
+      <AdminLangProvider>
+        <AdminSetup />
+      </AdminLangProvider>
+    );
+  }
 
-  return <AdminShell>{children}</AdminShell>;
+  const user = await currentUser();
+
+  // login nahi hai to andar ka kuch bhi nahi dikhta
+  if (!user) {
+    return (
+      <AdminLangProvider>
+        <AdminLogin />
+      </AdminLangProvider>
+    );
+  }
+
+  return (
+    <AdminLangProvider>
+      <AdminShell user={user.toSafeJSON()}>{children}</AdminShell>
+    </AdminLangProvider>
+  );
 }

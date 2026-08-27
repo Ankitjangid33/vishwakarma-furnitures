@@ -3,12 +3,14 @@
 import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Icon from '../Icons';
+import { useLang } from '../LanguageProvider';
 
 /**
  * Photo upload — browser se seedha Cloudinary par jaati hai.
  * Server sirf signature deta hai, isse badi photos bhi aaram se chadhti hain.
  */
-export default function ImageUploader({ images = [], onChange, max = 6, label = 'फोटो / Photos' }) {
+export default function ImageUploader({ images = [], onChange, max = 6, label }) {
+  const { t } = useLang();
   const inputRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState('');
@@ -19,9 +21,7 @@ export default function ImageUploader({ images = [], onChange, max = 6, label = 
     if (!sigRes.ok) {
       const d = await sigRes.json().catch(() => ({}));
       throw new Error(
-        d.error === 'CLOUDINARY_NOT_CONFIGURED'
-          ? 'Cloudinary set nahi hai — .env.local me CLOUDINARY_* values daalein'
-          : 'Upload signature nahi mila'
+        d.error === 'CLOUDINARY_NOT_CONFIGURED' ? t('cloudinaryMissing') : t('uploadSignatureFailed')
       );
     }
 
@@ -39,7 +39,7 @@ export default function ImageUploader({ images = [], onChange, max = 6, label = 
       body: form
     });
 
-    if (!res.ok) throw new Error('Cloudinary upload fail hua');
+    if (!res.ok) throw new Error(t('uploadFailed'));
 
     const data = await res.json();
     return { url: data.secure_url, publicId: data.public_id, alt: '' };
@@ -59,7 +59,7 @@ export default function ImageUploader({ images = [], onChange, max = 6, label = 
     try {
       for (const [i, file] of picked.entries()) {
         if (file.size > 10 * 1024 * 1024) {
-          throw new Error(`${file.name} — 10MB se badi photo nahi chalegi`);
+          throw new Error(`${file.name} — ${t('photoTooBig')}`);
         }
         setProgress(`${i + 1} / ${picked.length}`);
         uploaded.push(await uploadOne(file));
@@ -89,7 +89,7 @@ export default function ImageUploader({ images = [], onChange, max = 6, label = 
   return (
     <div>
       <span className="label">
-        {label} <span className="font-normal text-muted">({images.length}/{max})</span>
+        {label || t('photos')} <span className="font-normal text-muted">({images.length}/{max})</span>
       </span>
 
       <div className="mt-2 flex flex-wrap gap-3">
@@ -99,14 +99,14 @@ export default function ImageUploader({ images = [], onChange, max = 6, label = 
             <button
               type="button"
               onClick={() => remove(i)}
-              aria-label="Remove"
+              aria-label={t('delete')}
               className="absolute right-1 top-1 grid h-7 w-7 place-items-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100"
             >
               <Icon name="close" className="h-4 w-4" />
             </button>
             {i === 0 && (
               <span className="absolute bottom-0 left-0 right-0 bg-black/60 py-0.5 text-center text-[10px] text-white">
-                मुख्य फोटो
+                {t('mainPhoto')}
               </span>
             )}
           </div>
@@ -122,7 +122,7 @@ export default function ImageUploader({ images = [], onChange, max = 6, label = 
             <span className="text-center">
               <Icon name="upload" className="mx-auto h-6 w-6" />
               <span className="mt-1 block text-[11px] font-semibold">
-                {busy ? progress || '...' : 'फोटो जोड़ें'}
+                {busy ? progress || '...' : t('addPhoto')}
               </span>
             </span>
           </button>

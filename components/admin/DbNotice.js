@@ -1,9 +1,19 @@
 'use client';
 
 import Icon from '../Icons';
+import { useLang } from '../LanguageProvider';
+
+/** Error codes jinke liye humare paas apni line hai */
+const ERROR_KEY = {
+  FORBIDDEN: 'ownerOnly',
+  UNAUTHORIZED: 'wrongLogin',
+  NETWORK: 'somethingWrong'
+};
 
 /** Jab MongoDB abhi juda na ho — saaf saaf batata hai kya karna hai */
 export default function DbNotice({ error }) {
+  const { t } = useLang();
+
   if (!error) return null;
 
   if (error === 'DB_NOT_CONNECTED') {
@@ -12,24 +22,13 @@ export default function DbNotice({ error }) {
         <div className="flex items-start gap-3">
           <Icon name="shield" className="mt-0.5 h-6 w-6 shrink-0 text-amber-600" />
           <div>
-            <h3 className="font-semibold text-amber-900">MongoDB abhi juda nahi hai</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-amber-800">
-              Admin panel ka data database me save hota hai. Chalu karne ke liye:
-            </p>
+            <h3 className="font-semibold text-amber-900">{t('dbNotConnectedTitle')}</h3>
+            <p className="mt-1.5 text-sm leading-relaxed text-amber-800">{t('dbNotConnectedIntro')}</p>
             <ol className="mt-3 space-y-1.5 text-sm text-amber-900">
-              <li>
-                1. <b>mongodb.com/atlas</b> par free account banayein aur ek cluster banayein
-              </li>
-              <li>
-                2. Connect → Drivers se connection string copy karein
-              </li>
-              <li>
-                3. Project ki <code className="rounded bg-white px-1.5 py-0.5">.env.local</code> file me{' '}
-                <code className="rounded bg-white px-1.5 py-0.5">MONGODB_URI</code> me paste karein
-              </li>
-              <li>
-                4. Terminal me <code className="rounded bg-white px-1.5 py-0.5">npm run seed</code> chalayein
-              </li>
+              <li>1. {t('dbStep1')}</li>
+              <li>2. {t('dbStep2')}</li>
+              <li>3. {t('dbStep3')}</li>
+              <li>4. {t('dbStep4')}</li>
             </ol>
           </div>
         </div>
@@ -39,7 +38,7 @@ export default function DbNotice({ error }) {
 
   return (
     <div className="card border-red-200 bg-red-50 p-5 text-sm text-red-800">
-      कुछ गड़बड़ हो गई: {error}
+      {ERROR_KEY[error] ? t(ERROR_KEY[error]) : `${t('somethingWrong')}: ${error}`}
     </div>
   );
 }

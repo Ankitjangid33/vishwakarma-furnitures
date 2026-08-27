@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
+import { useLang } from '@/components/LanguageProvider';
 
-const STATUS_LABEL = { new: 'नया', read: 'पढ़ लिया', replied: 'जवाब दिया' };
+const STATUS_KEY = { new: 'msgNew', read: 'msgRead', replied: 'msgReplied' };
 
 export default function AdminMessages() {
+  const { t } = useLang();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -45,7 +47,7 @@ export default function AdminMessages() {
   };
 
   const remove = async (msg) => {
-    if (!window.confirm('यह संदेश हटाना है?')) return;
+    if (!window.confirm(t('deleteMessageQ'))) return;
     const res = await fetch(`/api/admin/messages/${msg._id}`, { method: 'DELETE' });
     if (res.ok) setMessages((list) => list.filter((m) => m._id !== msg._id));
   };
@@ -53,17 +55,17 @@ export default function AdminMessages() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl text-wood-900">संदेश / Messages</h1>
-        <p className="mt-1 text-sm text-muted">Contact फॉर्म से आए सारे संदेश</p>
+        <h1 className="text-2xl text-wood-900">{t('messagesTitle')}</h1>
+        <p className="mt-1 text-sm text-muted">{t('messagesSubtitle')}</p>
       </header>
 
       {error && <DbNotice error={error} />}
 
       {!error &&
         (loading ? (
-          <p className="text-sm text-muted">लोड हो रहा है…</p>
+          <p className="text-sm text-muted">{t('loading')}</p>
         ) : messages.length === 0 ? (
-          <div className="card p-10 text-center text-sm text-muted">अभी कोई संदेश नहीं आया</div>
+          <div className="card p-10 text-center text-sm text-muted">{t('noMessagesYet')}</div>
         ) : (
           <div className="space-y-3">
             {messages.map((m) => (
@@ -80,7 +82,7 @@ export default function AdminMessages() {
                     </p>
                   </div>
                   <span className="rounded-full bg-wood-100 px-2.5 py-1 text-xs font-semibold text-wood-700">
-                    {STATUS_LABEL[m.status]}
+                    {t(STATUS_KEY[m.status])}
                   </span>
                 </div>
 
@@ -90,7 +92,7 @@ export default function AdminMessages() {
                 <div className="mt-4 flex flex-wrap gap-2 border-t border-wood-100 pt-3">
                   <a href={`tel:+91${m.phone}`} className="btn btn-outline !py-2 !text-xs">
                     <Icon name="phone" className="h-4 w-4" />
-                    कॉल करें
+                    {t('call')}
                   </a>
                   <a
                     href={`https://wa.me/91${m.phone}`}
@@ -104,12 +106,12 @@ export default function AdminMessages() {
                   {m.status !== 'read' && (
                     <button type="button" onClick={() => setStatus(m, 'read')} className="btn btn-outline !py-2 !text-xs">
                       <Icon name="check" className="h-4 w-4" />
-                      पढ़ लिया
+                      {t('markRead')}
                     </button>
                   )}
                   {m.status !== 'replied' && (
                     <button type="button" onClick={() => setStatus(m, 'replied')} className="btn btn-outline !py-2 !text-xs">
-                      जवाब दे दिया
+                      {t('markReplied')}
                     </button>
                   )}
                   <button
@@ -118,7 +120,7 @@ export default function AdminMessages() {
                     className="btn !border !border-red-200 !py-2 !text-xs !text-red-600 hover:!bg-red-50"
                   >
                     <Icon name="trash" className="h-4 w-4" />
-                    हटाएं
+                    {t('delete')}
                   </button>
                 </div>
               </article>
