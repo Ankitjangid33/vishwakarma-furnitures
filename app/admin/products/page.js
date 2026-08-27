@@ -69,14 +69,14 @@ export default function AdminProducts() {
 
   return (
     <div>
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl text-wood-900">{t('productsTitle')}</h1>
           <p className="mt-1 text-sm text-muted">
             {products.length} {t('productsCount')}
           </p>
         </div>
-        <button type="button" onClick={() => setEditing('new')} className="btn btn-primary">
+        <button type="button" onClick={() => setEditing('new')} className="btn btn-primary self-start sm:self-auto">
           <Icon name="plus" className="h-4 w-4" />
           {t('addProduct')}
         </button>
