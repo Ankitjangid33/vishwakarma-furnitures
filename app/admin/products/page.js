@@ -90,13 +90,13 @@ export default function AdminProducts() {
             <div className="relative min-w-[220px] flex-1">
               <Icon name="search" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-wood-400" />
               <input
-                className="field !pl-10"
+                className="field pl-10"
                 placeholder={t('searchByName')}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />
             </div>
-            <select className="field !w-auto" value={category} onChange={(e) => setCategory(e.target.value)}>
+            <select className="field w-auto" value={category} onChange={(e) => setCategory(e.target.value)}>
               <option value="">{t('allRooms')}</option>
               {CATEGORIES.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -150,7 +150,7 @@ export default function AdminProducts() {
                       <button
                         type="button"
                         onClick={() => toggle(p, 'active')}
-                        className={`chip !py-1.5 !text-xs ${p.active ? 'chip-active' : ''}`}
+                        className={`chip py-1.5 text-xs ${p.active ? 'chip-active' : ''}`}
                       >
                         {p.active ? t('active') : t('inactive')}
                       </button>

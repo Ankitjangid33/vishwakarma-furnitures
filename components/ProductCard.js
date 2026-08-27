@@ -74,7 +74,7 @@ export default function ProductCard({ product, priority = false }) {
           <button
             type="button"
             onClick={handleAdd}
-            className={`btn !px-3.5 !py-2 !text-xs ${justAdded ? 'btn-outline !border-green-500 !text-green-700' : 'btn-primary'}`}
+            className={`btn px-3.5 py-2 text-xs ${justAdded ? 'btn-outline border-green-500 text-green-700' : 'btn-primary'}`}
           >
             {justAdded ? (
               <>

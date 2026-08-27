@@ -134,7 +134,7 @@ export default function HomeClient({ featured = [], gallery = [], counts = {} })
                 <span className="eyebrow">{t('featuredTitle')}</span>
                 <h2 className="section-title mt-2">{t('featuredSub')}</h2>
               </div>
-              <Link href="/products" className="btn btn-outline !py-2.5 !text-sm">
+              <Link href="/products" className="btn btn-outline py-2.5 text-sm">
                 {t('viewAll')}
                 <Icon name="arrowRight" className="h-4 w-4" />
               </Link>
@@ -171,13 +171,13 @@ export default function HomeClient({ featured = [], gallery = [], counts = {} })
           <div className="container-page">
             <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
               <div className="max-w-2xl">
-                <span className="eyebrow !text-gold-400">{t('navGallery')}</span>
-                <h2 className="section-title mt-2 !text-white">{t('workTitle')}</h2>
+                <span className="eyebrow text-gold-400">{t('navGallery')}</span>
+                <h2 className="section-title mt-2 text-white">{t('workTitle')}</h2>
                 <p className="mt-3 text-wood-200">{t('workSub')}</p>
               </div>
               <Link
                 href="/gallery"
-                className="btn !border-white/30 !bg-white/10 !text-white hover:!bg-white/20"
+                className="btn border-white/30 bg-white/10 text-white hover:bg-white/20"
               >
                 {t('viewAll')}
                 <Icon name="arrowRight" className="h-4 w-4" />
@@ -270,10 +270,10 @@ export default function HomeClient({ featured = [], gallery = [], counts = {} })
             <h2 className="text-3xl md:text-4xl">{t('ctaTitle')}</h2>
             <p className="mt-4 text-white/85">{t('ctaSub')}</p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link href="/contact" className="btn !bg-white !text-wood-800 hover:!bg-wood-50">
+              <Link href="/contact" className="btn bg-white text-wood-800 hover:bg-wood-50">
                 {t('navContact')}
               </Link>
-              <Link href="/products" className="btn !border-white/40 !bg-white/10 !text-white hover:!bg-white/20">
+              <Link href="/products" className="btn border-white/40 bg-white/10 text-white hover:bg-white/20">
                 {t('heroCta1')}
               </Link>
             </div>

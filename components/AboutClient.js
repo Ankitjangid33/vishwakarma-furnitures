@@ -69,7 +69,7 @@ export default function AboutClient({ gallery = [] }) {
       {/* promise */}
       <section className="bg-wood-50 py-14">
         <div className="container-page">
-          <h2 className="section-title !text-2xl">{t('aboutPromiseTitle')}</h2>
+          <h2 className="section-title text-2xl">{t('aboutPromiseTitle')}</h2>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2">
             {PROMISES.map((k) => (
               <li key={k} className="flex items-start gap-3 rounded-2xl border border-wood-100 bg-white p-5">
@@ -83,7 +83,7 @@ export default function AboutClient({ gallery = [] }) {
 
       {/* process */}
       <section className="container-page py-14">
-        <h2 className="section-title text-center !text-2xl">{t('processTitle')}</h2>
+        <h2 className="section-title text-center text-2xl">{t('processTitle')}</h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
             <div key={s.title} className="relative rounded-2xl border border-wood-100 bg-white p-6">

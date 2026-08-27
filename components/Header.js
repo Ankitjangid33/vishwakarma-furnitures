@@ -120,7 +120,7 @@ export default function Header() {
               href={waLink()}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-whatsapp hidden !px-4 !py-2 !text-sm md:inline-flex"
+              className="btn btn-whatsapp hidden px-4 py-2 text-sm md:inline-flex"
             >
               <Icon name="whatsapp" className="h-4 w-4" />
               {t('whatsapp')}
@@ -186,7 +186,7 @@ export default function Header() {
             <div className="space-y-3 border-t border-wood-100 px-5 py-4">
               <LanguageSwitch />
               <div className="grid grid-cols-2 gap-2">
-                <a href={`tel:${dialNumber()}`} className="btn btn-outline !py-2.5 !text-sm">
+                <a href={`tel:${dialNumber()}`} className="btn btn-outline py-2.5 text-sm">
                   <Icon name="phone" className="h-4 w-4" />
                   {t('callNow')}
                 </a>
@@ -194,7 +194,7 @@ export default function Header() {
                   href={waLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn btn-whatsapp !py-2.5 !text-sm"
+                  className="btn btn-whatsapp py-2.5 text-sm"
                 >
                   <Icon name="whatsapp" className="h-4 w-4" />
                   {t('whatsapp')}

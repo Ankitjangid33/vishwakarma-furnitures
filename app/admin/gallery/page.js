@@ -233,14 +233,14 @@ export default function AdminGallery() {
                     </p>
 
                     <div className="mt-3 flex gap-2">
-                      <button type="button" onClick={() => setEditing(item)} className="btn btn-outline !py-2 !text-xs">
+                      <button type="button" onClick={() => setEditing(item)} className="btn btn-outline py-2 text-xs">
                         <Icon name="hammer" className="h-4 w-4" />
                         {t('edit')}
                       </button>
                       <button
                         type="button"
                         onClick={() => remove(item)}
-                        className="btn !border !border-red-200 !py-2 !text-xs !text-red-600 hover:!bg-red-50"
+                        className="btn border border-red-200 py-2 text-xs text-red-600 hover:bg-red-50"
                       >
                         <Icon name="trash" className="h-4 w-4" />
                         {t('delete')}

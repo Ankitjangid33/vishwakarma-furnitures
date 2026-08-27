@@ -55,7 +55,7 @@ export default function ProductsBrowser({ products = [], initialCategory = '', i
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={t('searchPlaceholder')}
-          className="field !py-3 !pl-12 !text-base"
+          className="field py-3 pl-12 text-base"
           aria-label={t('search')}
         />
       </div>
@@ -85,20 +85,20 @@ export default function ProductsBrowser({ products = [], initialCategory = '', i
       {/* ---------- type chips ---------- */}
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold uppercase tracking-wider text-muted">{t('filterType')}:</span>
-        <button type="button" onClick={() => setType('')} className={`chip !py-1.5 !text-xs ${!type ? 'chip-active' : ''}`}>
+        <button type="button" onClick={() => setType('')} className={`chip py-1.5 text-xs ${!type ? 'chip-active' : ''}`}>
           {t('all')}
         </button>
         <button
           type="button"
           onClick={() => setType('item')}
-          className={`chip !py-1.5 !text-xs ${type === 'item' ? 'chip-active' : ''}`}
+          className={`chip py-1.5 text-xs ${type === 'item' ? 'chip-active' : ''}`}
         >
           {t('typeItem')}
         </button>
         <button
           type="button"
           onClick={() => setType('set')}
-          className={`chip !py-1.5 !text-xs ${type === 'set' ? 'chip-active' : ''}`}
+          className={`chip py-1.5 text-xs ${type === 'set' ? 'chip-active' : ''}`}
         >
           {t('typeSet')}
         </button>
@@ -129,7 +129,7 @@ export default function ProductsBrowser({ products = [], initialCategory = '', i
                 setType('');
                 changeCategory('');
               }}
-              className="btn btn-outline !py-2 !text-sm"
+              className="btn btn-outline py-2 text-sm"
             >
               {t('clearFilters')}
             </button>

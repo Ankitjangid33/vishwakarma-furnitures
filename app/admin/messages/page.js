@@ -90,7 +90,7 @@ export default function AdminMessages() {
                 <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-wood-800">{m.message}</p>
 
                 <div className="mt-4 flex flex-wrap gap-2 border-t border-wood-100 pt-3">
-                  <a href={`tel:+91${m.phone}`} className="btn btn-outline !py-2 !text-xs">
+                  <a href={`tel:+91${m.phone}`} className="btn btn-outline py-2 text-xs">
                     <Icon name="phone" className="h-4 w-4" />
                     {t('call')}
                   </a>
@@ -98,26 +98,26 @@ export default function AdminMessages() {
                     href={`https://wa.me/91${m.phone}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-whatsapp !py-2 !text-xs"
+                    className="btn btn-whatsapp py-2 text-xs"
                   >
                     <Icon name="whatsapp" className="h-4 w-4" />
                     WhatsApp
                   </a>
                   {m.status !== 'read' && (
-                    <button type="button" onClick={() => setStatus(m, 'read')} className="btn btn-outline !py-2 !text-xs">
+                    <button type="button" onClick={() => setStatus(m, 'read')} className="btn btn-outline py-2 text-xs">
                       <Icon name="check" className="h-4 w-4" />
                       {t('markRead')}
                     </button>
                   )}
                   {m.status !== 'replied' && (
-                    <button type="button" onClick={() => setStatus(m, 'replied')} className="btn btn-outline !py-2 !text-xs">
+                    <button type="button" onClick={() => setStatus(m, 'replied')} className="btn btn-outline py-2 text-xs">
                       {t('markReplied')}
                     </button>
                   )}
                   <button
                     type="button"
                     onClick={() => remove(m)}
-                    className="btn !border !border-red-200 !py-2 !text-xs !text-red-600 hover:!bg-red-50"
+                    className="btn border border-red-200 py-2 text-xs text-red-600 hover:bg-red-50"
                   >
                     <Icon name="trash" className="h-4 w-4" />
                     {t('delete')}

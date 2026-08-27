@@ -253,7 +253,7 @@ export default function ProductForm({ product, onClose, onSaved }) {
                 <button
                   type="button"
                   onClick={() => setForm((f) => ({ ...f, includes: [...(f.includes || []), { hi: '', en: '' }] }))}
-                  className="btn btn-outline !py-2 !text-xs"
+                  className="btn btn-outline py-2 text-xs"
                 >
                   <Icon name="plus" className="h-4 w-4" />
                   {t('addLine')}
@@ -296,7 +296,7 @@ export default function ProductForm({ product, onClose, onSaved }) {
               {t('sortOrder')}
               <input
                 type="number"
-                className="field !w-24 !py-1.5"
+                className="field w-24 py-1.5"
                 value={form.sortOrder}
                 onChange={set('sortOrder')}
               />

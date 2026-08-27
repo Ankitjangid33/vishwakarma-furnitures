@@ -185,7 +185,7 @@ export default function ProductDetail({ product, related = [] }) {
               <button
                 type="button"
                 onClick={handleAdd}
-                className={`btn ${added ? 'btn-outline !border-green-500 !text-green-700' : 'btn-primary'}`}
+                className={`btn ${added ? 'btn-outline border-green-500 text-green-700' : 'btn-primary'}`}
               >
                 <Icon name={added ? 'check' : 'plus'} className="h-4 w-4" />
                 {added ? t('added') : t('addToOrder')}
@@ -213,7 +213,7 @@ export default function ProductDetail({ product, related = [] }) {
       {/* ---------- related ---------- */}
       {related.length > 0 && (
         <section className="container-page pb-16 pt-10">
-          <h2 className="section-title !text-2xl">{t('relatedTitle')}</h2>
+          <h2 className="section-title text-2xl">{t('relatedTitle')}</h2>
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {related.map((p) => (
               <ProductCard key={p.slug} product={p} />

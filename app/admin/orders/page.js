@@ -177,7 +177,7 @@ export default function AdminOrders() {
                         </div>
 
                         <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-wood-200 pt-4">
-                          <a href={`tel:+91${o.customer?.phone}`} className="btn btn-outline !py-2 !text-xs">
+                          <a href={`tel:+91${o.customer?.phone}`} className="btn btn-outline py-2 text-xs">
                             <Icon name="phone" className="h-4 w-4" />
                             {t('call')}
                           </a>
@@ -185,14 +185,14 @@ export default function AdminOrders() {
                             href={`https://wa.me/91${o.customer?.phone}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn btn-whatsapp !py-2 !text-xs"
+                            className="btn btn-whatsapp py-2 text-xs"
                           >
                             <Icon name="whatsapp" className="h-4 w-4" />
                             WhatsApp
                           </a>
 
                           <select
-                            className="field !w-auto !py-2 !text-xs"
+                            className="field w-auto py-2 text-xs"
                             value={o.status}
                             onChange={(e) => setStatus(o, e.target.value)}
                           >
@@ -206,7 +206,7 @@ export default function AdminOrders() {
                           <button
                             type="button"
                             onClick={() => remove(o)}
-                            className="btn !border !border-red-200 !py-2 !text-xs !text-red-600 hover:!bg-red-50"
+                            className="btn border border-red-200 py-2 text-xs text-red-600 hover:bg-red-50"
                           >
                             <Icon name="trash" className="h-4 w-4" />
                             {t('delete')}

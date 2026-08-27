@@ -229,7 +229,7 @@ export default function AdminUsers() {
                       <button
                         type="button"
                         onClick={() => setResetFor(resetFor === u._id ? null : u._id)}
-                        className="btn btn-outline !py-2 !text-xs"
+                        className="btn btn-outline py-2 text-xs"
                       >
                         <Icon name="shield" className="h-4 w-4" />
                         {t('changePassword')}
@@ -240,21 +240,21 @@ export default function AdminUsers() {
                           <button
                             type="button"
                             onClick={() => patch(u, { active: !u.active })}
-                            className="btn btn-outline !py-2 !text-xs"
+                            className="btn btn-outline py-2 text-xs"
                           >
                             {u.active ? t('disable') : t('enable')}
                           </button>
                           <button
                             type="button"
                             onClick={() => patch(u, { role: u.role === 'owner' ? 'staff' : 'owner' })}
-                            className="btn btn-outline !py-2 !text-xs"
+                            className="btn btn-outline py-2 text-xs"
                           >
                             {u.role === 'owner' ? t('makeStaff') : t('makeOwner')}
                           </button>
                           <button
                             type="button"
                             onClick={() => remove(u)}
-                            className="btn !border !border-red-200 !py-2 !text-xs !text-red-600 hover:!bg-red-50"
+                            className="btn border border-red-200 py-2 text-xs text-red-600 hover:bg-red-50"
                           >
                             <Icon name="trash" className="h-4 w-4" />
                             {t('delete')}
@@ -276,13 +276,13 @@ export default function AdminUsers() {
                           autoComplete="new-password"
                           required
                         />
-                        <button type="submit" className="btn btn-primary !py-2.5 !text-xs">
+                        <button type="submit" className="btn btn-primary py-2.5 text-xs">
                           {t('save')}
                         </button>
                         <button
                           type="button"
                           onClick={() => setResetFor(null)}
-                          className="btn btn-outline !py-2.5 !text-xs"
+                          className="btn btn-outline py-2.5 text-xs"
                         >
                           {t('cancel')}
                         </button>
