@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
+import { ListSkeleton } from '@/components/Skeleton';
 import ProductForm from '@/components/admin/ProductForm';
 import { useLang } from '@/components/LanguageProvider';
 import { CATEGORIES, getCategory } from '@/lib/categories';
@@ -107,7 +108,7 @@ export default function AdminProducts() {
           </div>
 
           {loading ? (
-            <p className="text-sm text-muted">{t('loading')}</p>
+            <ListSkeleton rows={6} withThumb divided />
           ) : filtered.length === 0 ? (
             <div className="card p-10 text-center text-sm text-muted">{t('noProductsFound')}</div>
           ) : (

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
+import { Skeleton, SkeletonRegion, StatCardsSkeleton, ListSkeleton } from '@/components/Skeleton';
 import { useLang } from '@/components/LanguageProvider';
 import { formatPrice } from '@/lib/i18n';
 
@@ -53,7 +54,15 @@ export default function AdminDashboard() {
 
       {error && <DbNotice error={error} />}
 
-      {loading && <p className="text-sm text-muted">{t('loading')}</p>}
+      {loading && (
+        <SkeletonRegion>
+          <StatCardsSkeleton />
+          <div className="mt-8">
+            <Skeleton className="mb-3 h-6 w-40" />
+            <ListSkeleton rows={4} divided />
+          </div>
+        </SkeletonRegion>
+      )}
 
       {data && (
         <>

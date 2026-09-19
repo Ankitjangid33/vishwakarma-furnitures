@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
+import { ListSkeleton } from '@/components/Skeleton';
 import PasswordField from '@/components/admin/PasswordField';
 import { useLang } from '@/components/LanguageProvider';
 
@@ -186,7 +187,7 @@ export default function AdminUsers() {
           </form>
 
           {loading ? (
-            <p className="text-sm text-muted">{t('loading')}</p>
+            <ListSkeleton rows={3} />
           ) : (
             <div className="space-y-3">
               {users.map((u) => {

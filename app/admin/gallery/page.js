@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
+import { MediaCardGridSkeleton } from '@/components/Skeleton';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { useLang } from '@/components/LanguageProvider';
 import { CATEGORIES, getCategory } from '@/lib/categories';
@@ -199,7 +200,7 @@ export default function AdminGallery() {
 
       {!error &&
         (loading ? (
-          <p className="text-sm text-muted">{t('loading')}</p>
+          <MediaCardGridSkeleton />
         ) : items.length === 0 ? (
           <div className="card p-10 text-center text-sm text-muted">{t('noPhotosYet')}</div>
         ) : (

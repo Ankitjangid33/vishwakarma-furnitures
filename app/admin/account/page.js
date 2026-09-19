@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
+import { Skeleton, SkeletonRegion, FormCardSkeleton } from '@/components/Skeleton';
 import PasswordField from '@/components/admin/PasswordField';
 import { useLang } from '@/components/LanguageProvider';
 
@@ -88,7 +89,18 @@ export default function AdminAccount() {
   };
 
   if (error) return <DbNotice error={error} />;
-  if (!me) return <p className="text-sm text-muted">{t('loading')}</p>;
+  if (!me) {
+    return (
+      <SkeletonRegion className="max-w-xl">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="mt-2 mb-6 h-4 w-40" />
+        <div className="space-y-5">
+          <FormCardSkeleton />
+          <FormCardSkeleton fields={3} />
+        </div>
+      </SkeletonRegion>
+    );
+  }
 
   return (
     <div className="max-w-xl">

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Icon from './Icons';
 import ProductImage from './ProductImage';
+import { Skeleton, SkeletonRegion } from './Skeleton';
 import { useLang } from './LanguageProvider';
 import { useCart } from './CartProvider';
 import { formatPrice, UNIT_KEY } from '@/lib/i18n';
@@ -142,8 +143,46 @@ export default function CartClient() {
     );
   }
 
+  /* ---------------- browser se cart padha ja raha hai ---------------- */
+  if (!ready) {
+    return (
+      <SkeletonRegion className="container-page py-10">
+        <div className="space-y-3">
+          {[0, 1].map((i) => (
+            <div key={i} className="card flex items-center gap-4 p-3 sm:p-4">
+              <Skeleton className="h-20 w-24 shrink-0 rounded-xl" />
+              <div className="min-w-0 flex-1">
+                <Skeleton className="h-4 w-48 max-w-full" />
+                <Skeleton className="mt-2 h-3 w-32" />
+              </div>
+              <Skeleton className="h-9 w-28 rounded-full" />
+            </div>
+          ))}
+        </div>
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_360px]">
+          <div className="card p-5 md:p-6">
+            <Skeleton className="h-6 w-48" />
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i}>
+                  <Skeleton className="h-3.5 w-24" />
+                  <Skeleton className="mt-2 h-11 w-full rounded-xl" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="card p-5">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="mt-4 h-8 w-40" />
+            <Skeleton className="mt-6 h-12 w-full rounded-full" />
+          </div>
+        </div>
+      </SkeletonRegion>
+    );
+  }
+
   /* ---------------- empty ---------------- */
-  if (ready && items.length === 0) {
+  if (items.length === 0) {
     return (
       <section className="container-page py-16">
         <div className="card mx-auto max-w-lg p-10 text-center">

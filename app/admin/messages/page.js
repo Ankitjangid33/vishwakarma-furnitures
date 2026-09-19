@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
+import { ListSkeleton } from '@/components/Skeleton';
 import { useLang } from '@/components/LanguageProvider';
 
 const STATUS_KEY = { new: 'msgNew', read: 'msgRead', replied: 'msgReplied' };
@@ -63,7 +64,7 @@ export default function AdminMessages() {
 
       {!error &&
         (loading ? (
-          <p className="text-sm text-muted">{t('loading')}</p>
+          <ListSkeleton rows={4} />
         ) : messages.length === 0 ? (
           <div className="card p-10 text-center text-sm text-muted">{t('noMessagesYet')}</div>
         ) : (
