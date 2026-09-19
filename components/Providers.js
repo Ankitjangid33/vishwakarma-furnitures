@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { LanguageProvider } from './LanguageProvider';
 import { CartProvider } from './CartProvider';
+import { DialogProvider } from './DialogProvider';
 import Header from './Header';
 import Footer from './Footer';
 import WhatsAppFab from './WhatsAppFab';
@@ -20,12 +21,14 @@ export default function Providers({ children }) {
 
   return (
     <LanguageProvider>
-      <CartProvider>
-        <Header />
-        <main className="min-h-[60vh]">{children}</main>
-        <Footer />
-        <WhatsAppFab />
-      </CartProvider>
+      <DialogProvider>
+        <CartProvider>
+          <Header />
+          <main className="min-h-[60vh]">{children}</main>
+          <Footer />
+          <WhatsAppFab />
+        </CartProvider>
+      </DialogProvider>
     </LanguageProvider>
   );
 }

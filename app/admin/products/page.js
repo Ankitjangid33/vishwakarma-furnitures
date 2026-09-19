@@ -7,11 +7,13 @@ import DbNotice from '@/components/admin/DbNotice';
 import { ListSkeleton } from '@/components/Skeleton';
 import ProductForm from '@/components/admin/ProductForm';
 import { useLang } from '@/components/LanguageProvider';
+import { useDialog } from '@/components/DialogProvider';
 import { CATEGORIES, getCategory } from '@/lib/categories';
 import { formatPrice, pick } from '@/lib/i18n';
 
 export default function AdminProducts() {
   const { t, lang } = useLang();
+  const dialog = useDialog();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -61,12 +63,18 @@ export default function AdminProducts() {
     }
   };
 
-  const remove = async (product) => {
-    if (!window.confirm(`"${pick(product.name, lang)}" — ${t('deleteForeverQ')}`)) return;
-
-    const res = await fetch(`/api/admin/products/${product._id}`, { method: 'DELETE' });
-    if (res.ok) setProducts((list) => list.filter((p) => p._id !== product._id));
-  };
+  const remove = (product) =>
+    dialog.confirm({
+      tone: 'danger',
+      title: t('deleteProductQ'),
+      detail: pick(product.name, lang),
+      message: t('cannotUndo'),
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/products/${product._id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error(t('notDone'));
+        setProducts((list) => list.filter((p) => p._id !== product._id));
+      }
+    });
 
   return (
     <div>

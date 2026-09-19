@@ -5,6 +5,7 @@ import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
 import { ListSkeleton } from '@/components/Skeleton';
 import { useLang } from '@/components/LanguageProvider';
+import { useDialog } from '@/components/DialogProvider';
 import { formatPrice, pick } from '@/lib/i18n';
 
 const STATUSES = [
@@ -20,6 +21,7 @@ const statusInfo = (v) => STATUSES.find((s) => s.v === v) || STATUSES[0];
 
 export default function AdminOrders() {
   const { t, lang } = useLang();
+  const dialog = useDialog();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -60,11 +62,18 @@ export default function AdminOrders() {
     }
   };
 
-  const remove = async (order) => {
-    if (!window.confirm(`${t('deleteOrderQ')} ${order.orderNo}?`)) return;
-    const res = await fetch(`/api/admin/orders/${order._id}`, { method: 'DELETE' });
-    if (res.ok) setOrders((list) => list.filter((o) => o._id !== order._id));
-  };
+  const remove = (order) =>
+    dialog.confirm({
+      tone: 'danger',
+      title: t('deleteOrderQ'),
+      detail: [order.orderNo, order.customer?.name].filter(Boolean).join(' · '),
+      message: t('cannotUndo'),
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/orders/${order._id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error(t('notDone'));
+        setOrders((list) => list.filter((o) => o._id !== order._id));
+      }
+    });
 
   return (
     <div>

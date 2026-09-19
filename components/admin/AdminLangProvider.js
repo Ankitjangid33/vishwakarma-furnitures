@@ -1,6 +1,7 @@
 'use client';
 
 import { LanguageProvider } from '../LanguageProvider';
+import { DialogProvider } from '../DialogProvider';
 import { ADMIN_DICT, ADMIN_DEFAULT_LANG, ADMIN_LANG_KEY } from '@/lib/i18n-admin';
 
 /**
@@ -20,7 +21,7 @@ export default function AdminLangProvider({ children }) {
       dict={ADMIN_DICT}
       followBrowser={false}
     >
-      {children}
+      <DialogProvider>{children}</DialogProvider>
     </LanguageProvider>
   );
 }

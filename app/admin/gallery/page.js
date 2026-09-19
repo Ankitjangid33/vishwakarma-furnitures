@@ -7,6 +7,7 @@ import DbNotice from '@/components/admin/DbNotice';
 import { MediaCardGridSkeleton } from '@/components/Skeleton';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { useLang } from '@/components/LanguageProvider';
+import { useDialog } from '@/components/DialogProvider';
 import { CATEGORIES, getCategory } from '@/lib/categories';
 import { pick } from '@/lib/i18n';
 
@@ -149,6 +150,7 @@ function GalleryForm({ item, onClose, onSaved }) {
 
 export default function AdminGallery() {
   const { t, lang } = useLang();
+  const dialog = useDialog();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -175,11 +177,18 @@ export default function AdminGallery() {
     load();
   }, []);
 
-  const remove = async (item) => {
-    if (!window.confirm(t('deletePhotoQ'))) return;
-    const res = await fetch(`/api/admin/gallery/${item._id}`, { method: 'DELETE' });
-    if (res.ok) setItems((list) => list.filter((i) => i._id !== item._id));
-  };
+  const remove = (item) =>
+    dialog.confirm({
+      tone: 'danger',
+      title: t('deletePhotoQ'),
+      detail: pick(item.title, lang),
+      message: t('cannotUndo'),
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/gallery/${item._id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error(t('notDone'));
+        setItems((list) => list.filter((i) => i._id !== item._id));
+      }
+    });
 
   return (
     <div>

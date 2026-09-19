@@ -6,6 +6,7 @@ import DbNotice from '@/components/admin/DbNotice';
 import { ListSkeleton } from '@/components/Skeleton';
 import PasswordField from '@/components/admin/PasswordField';
 import { useLang } from '@/components/LanguageProvider';
+import { useDialog } from '@/components/DialogProvider';
 
 const ERROR_KEY = {
   INVALID_USERNAME: 'invalidUsername',
@@ -21,6 +22,7 @@ const EMPTY = { name: '', username: '', password: '', role: 'staff' };
 
 export default function AdminUsers() {
   const { t } = useLang();
+  const dialog = useDialog();
   const [users, setUsers] = useState([]);
   const [me, setMe] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -92,7 +94,11 @@ export default function AdminUsers() {
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      window.alert(ERROR_KEY[data.error] ? t(ERROR_KEY[data.error]) : t('notDone'));
+      await dialog.alert({
+        tone: 'error',
+        title: t('notDone'),
+        message: ERROR_KEY[data.error] ? t(ERROR_KEY[data.error]) : t('somethingWrong')
+      });
       return false;
     }
 
@@ -100,18 +106,21 @@ export default function AdminUsers() {
     return true;
   };
 
-  const remove = async (user) => {
-    if (!window.confirm(`${t('deleteUserQ')} @${user.username}`)) return;
-
-    const res = await fetch(`/api/admin/users/${user._id}`, { method: 'DELETE' });
-    if (res.ok) {
-      setUsers((list) => list.filter((u) => u._id !== user._id));
-      return;
-    }
-
-    const data = await res.json().catch(() => ({}));
-    window.alert(ERROR_KEY[data.error] ? t(ERROR_KEY[data.error]) : t('notDone'));
-  };
+  const remove = (user) =>
+    dialog.confirm({
+      tone: 'danger',
+      title: t('deleteUserQ'),
+      detail: `${user.name || user.username} · @${user.username}`,
+      message: t('cannotUndo'),
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/users/${user._id}`, { method: 'DELETE' });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(ERROR_KEY[data.error] ? t(ERROR_KEY[data.error]) : t('notDone'));
+        }
+        setUsers((list) => list.filter((u) => u._id !== user._id));
+      }
+    });
 
   const resetPassword = async (e, user) => {
     e.preventDefault();
@@ -119,7 +128,7 @@ export default function AdminUsers() {
 
     if (await patch(user, { password })) {
       setResetFor(null);
-      window.alert(`${t('passwordChangedFor')} @${user.username}`);
+      await dialog.alert({ tone: 'success', title: t('passwordChangedFor'), detail: `@${user.username}` });
     }
   };
 

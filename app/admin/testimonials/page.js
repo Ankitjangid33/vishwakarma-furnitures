@@ -5,6 +5,7 @@ import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
 import { TextCardGridSkeleton } from '@/components/Skeleton';
 import { useLang } from '@/components/LanguageProvider';
+import { useDialog } from '@/components/DialogProvider';
 import { pick } from '@/lib/i18n';
 
 const EMPTY = {
@@ -150,6 +151,7 @@ function TestimonialForm({ item, onClose, onSaved }) {
 
 export default function AdminTestimonials() {
   const { t, lang } = useLang();
+  const dialog = useDialog();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -176,11 +178,18 @@ export default function AdminTestimonials() {
     load();
   }, []);
 
-  const remove = async (item) => {
-    if (!window.confirm(t('deleteReviewQ'))) return;
-    const res = await fetch(`/api/admin/testimonials/${item._id}`, { method: 'DELETE' });
-    if (res.ok) setItems((list) => list.filter((i) => i._id !== item._id));
-  };
+  const remove = (item) =>
+    dialog.confirm({
+      tone: 'danger',
+      title: t('deleteReviewQ'),
+      detail: item.name,
+      message: t('cannotUndo'),
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/testimonials/${item._id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error(t('notDone'));
+        setItems((list) => list.filter((i) => i._id !== item._id));
+      }
+    });
 
   return (
     <div>

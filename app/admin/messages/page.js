@@ -5,11 +5,13 @@ import Icon from '@/components/Icons';
 import DbNotice from '@/components/admin/DbNotice';
 import { ListSkeleton } from '@/components/Skeleton';
 import { useLang } from '@/components/LanguageProvider';
+import { useDialog } from '@/components/DialogProvider';
 
 const STATUS_KEY = { new: 'msgNew', read: 'msgRead', replied: 'msgReplied' };
 
 export default function AdminMessages() {
   const { t } = useLang();
+  const dialog = useDialog();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -47,11 +49,18 @@ export default function AdminMessages() {
     }
   };
 
-  const remove = async (msg) => {
-    if (!window.confirm(t('deleteMessageQ'))) return;
-    const res = await fetch(`/api/admin/messages/${msg._id}`, { method: 'DELETE' });
-    if (res.ok) setMessages((list) => list.filter((m) => m._id !== msg._id));
-  };
+  const remove = (msg) =>
+    dialog.confirm({
+      tone: 'danger',
+      title: t('deleteMessageQ'),
+      detail: [msg.name, msg.phone].filter(Boolean).join(' · '),
+      message: t('cannotUndo'),
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/messages/${msg._id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error(t('notDone'));
+        setMessages((list) => list.filter((m) => m._id !== msg._id));
+      }
+    });
 
   return (
     <div>
