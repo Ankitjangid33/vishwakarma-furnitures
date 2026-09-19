@@ -42,7 +42,7 @@ export default function ProductCard({ product, priority = false }) {
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-5">
         <Link href={`/products/${product.slug}`}>
           <h3 className="line-clamp-2 text-base font-semibold text-wood-900 transition group-hover:text-wood-600">
             {name}
@@ -53,7 +53,7 @@ export default function ProductCard({ product, priority = false }) {
           {pick(product.description)}
         </p>
 
-        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted">
+        <div className="mb-4 mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted">
           {pick(product.material) && (
             <span className="inline-flex items-center gap-1">
               <Icon name="box" className="h-3.5 w-3.5" />
@@ -68,13 +68,13 @@ export default function ProductCard({ product, priority = false }) {
           )}
         </div>
 
-        <div className="mt-auto flex items-end justify-between gap-2 pt-4">
-          <PriceTag product={product} />
+        <div className="mt-auto flex flex-col gap-3 border-t border-wood-100 pt-4">
+          <PriceTag product={product} className="whitespace-nowrap" />
 
           <button
             type="button"
             onClick={handleAdd}
-            className={`btn px-3.5 py-2 text-xs ${justAdded ? 'btn-outline border-green-500 text-green-700' : 'btn-primary'}`}
+            className={`btn w-full whitespace-nowrap px-4 py-2.5 text-sm ${justAdded ? 'btn-outline border-green-500 text-green-700' : 'btn-primary'}`}
           >
             {justAdded ? (
               <>
