@@ -11,6 +11,7 @@ const NAV = [
   { href: '/admin', icon: 'grid', key: 'navDashboard' },
   { href: '/admin/products', icon: 'box', key: 'navProducts' },
   { href: '/admin/gallery', icon: 'image', key: 'navGallery' },
+  { href: '/admin/testimonials', icon: 'star', key: 'navTestimonials' },
   { href: '/admin/orders', icon: 'cart', key: 'navOrders' },
   { href: '/admin/messages', icon: 'chat', key: 'navMessages' },
   // users sirf owner ko dikhta hai

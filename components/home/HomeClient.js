@@ -7,7 +7,7 @@ import CategoryCard from '../CategoryCard';
 import ProductImage from '../ProductImage';
 import { useLang } from '../LanguageProvider';
 import { CATEGORIES } from '@/lib/categories';
-import { SITE, TESTIMONIALS, waLink } from '@/lib/site';
+import { SITE, waLink } from '@/lib/site';
 
 const WHY = [
   { icon: 'shield', title: 'why1Title', text: 'why1Text' },
@@ -23,7 +23,7 @@ const STEPS = [
   { icon: 'truck', title: 'step4Title', text: 'step4Text' }
 ];
 
-export default function HomeClient({ featured = [], gallery = [], counts = {} }) {
+export default function HomeClient({ featured = [], gallery = [], counts = {}, testimonials = [] }) {
   const { t, pick, lang } = useLang();
 
   return (
@@ -234,34 +234,36 @@ export default function HomeClient({ featured = [], gallery = [], counts = {} })
       </section>
 
       {/* ================= TESTIMONIALS ================= */}
-      <section className="bg-wood-50 py-16">
-        <div className="container-page">
-          <h2 className="section-title text-center">{t('testimonialsTitle')}</h2>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {TESTIMONIALS.map((r) => (
-              <figure key={r.name} className="card p-6">
-                <div className="flex gap-0.5 text-gold-500">
-                  {Array.from({ length: r.stars }).map((_, i) => (
-                    <Icon key={i} name="star" className="h-4 w-4" />
-                  ))}
-                </div>
-                <blockquote className="mt-3 text-sm leading-relaxed text-wood-800">
-                  “{pick(r.text)}”
-                </blockquote>
-                <figcaption className="mt-4 flex items-center gap-3 border-t border-wood-100 pt-4">
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-wood-100 text-wood-700">
-                    <Icon name="user" className="h-5 w-5" />
-                  </span>
-                  <span>
-                    <span className="block text-sm font-semibold text-wood-900">{r.name}</span>
-                    <span className="block text-xs text-muted">{pick(r.place)}</span>
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
+      {testimonials.length > 0 && (
+        <section className="bg-wood-50 py-16">
+          <div className="container-page">
+            <h2 className="section-title text-center">{t('testimonialsTitle')}</h2>
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              {testimonials.map((r) => (
+                <figure key={r._id} className="card flex flex-col p-6">
+                  <div className="flex gap-0.5 text-gold-500">
+                    {Array.from({ length: r.stars }).map((_, i) => (
+                      <Icon key={i} name="star" className="h-4 w-4" />
+                    ))}
+                  </div>
+                  <blockquote className="mb-4 mt-3 text-sm leading-relaxed text-wood-800">
+                    “{pick(r.text)}”
+                  </blockquote>
+                  <figcaption className="mt-auto flex items-center gap-3 border-t border-wood-100 pt-4">
+                    <span className="grid h-9 w-9 place-items-center rounded-full bg-wood-100 text-wood-700">
+                      <Icon name="user" className="h-5 w-5" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-semibold text-wood-900">{r.name}</span>
+                      <span className="block text-xs text-muted">{pick(r.place)}</span>
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ================= CTA ================= */}
       <section className="container-page py-16">
